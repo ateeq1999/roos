@@ -48,7 +48,7 @@ crates/roos-trigger      Axum HTTP server (Layer 1)
 crates/roos-scheduler    Cron + one-shot scheduler (Layer 2)
 crates/roos-tools        Standard tool belt (fs / shell / http, feature-flagged)
 crates/roos-memory       InMemoryStore / SledMemory / QdrantMemory
-crates/roos-providers    Anthropic / OpenAI / Ollama
+crates/roos-providers    Anthropic / OpenAI / Ollama / Groq / Cohere / Qwen
 crates/roos-observability tracing + OTel + Prometheus
 crates/roos-cli          roos binary: new/run/serve/list/status/logs/deploy + tui/
 mobile/                  React Native iOS + Android app
@@ -79,54 +79,55 @@ PHASE 1 – Kernel (tasks 1–21)
 20  roos-cli: roos run (ROOS-CLI-002, ROOS-TRIG-003)
 21  roos-cli: roos list (ROOS-CLI-004)
 
-PHASE 2 – Connector Belt (tasks 22–34)
+PHASE 2 – Connector Belt (tasks 22–35)
 22  roos-observability: structured logging + run_id correlation (ROOS-OBS-001)
 23  roos-tools: read_file / write_file / list_directory [tools-fs] (ROOS-TOOL-003)
 24  roos-tools: execute_shell + allowlist [tools-shell] (ROOS-TOOL-003)
 25  roos-tools: http_get / http_post / search_web [tools-http/web] (ROOS-TOOL-003)
-26  roos-memory: SledMemory + TTL expiration (ROOS-MEM-002)
-27  roos-scheduler: cron scheduler + Sled-backed task state (ROOS-SCHED-001)
-28  roos-scheduler: one-shot scheduled tasks (ROOS-SCHED-002)
-29  roos-scheduler: retry policy fixed/exponential (ROOS-SCHED-004)
-30  roos-cli: roos serve daemon + SIGTERM/SIGHUP (ROOS-CLI-003)
-31  roos-trigger: HMAC-SHA256 webhook verification (ROOS-TRIG-002)
-32  roos-core: RoosAgentBus multi-agent channel bus (ROOS-MULTI-001)
-33  roos-core: SupervisorAgent orchestrator-worker (ROOS-MULTI-002)
-34  Alpha release on crates.io
+26  roos-providers: Groq / Cohere / Qwen (DashScope) providers + .env.example key stubs (ROOS-PROV-005 / ROOS-PROV-006 / ROOS-PROV-007)
+27  roos-memory: SledMemory + TTL expiration (ROOS-MEM-002)
+28  roos-scheduler: cron scheduler + Sled-backed task state (ROOS-SCHED-001)
+29  roos-scheduler: one-shot scheduled tasks (ROOS-SCHED-002)
+30  roos-scheduler: retry policy fixed/exponential (ROOS-SCHED-004)
+31  roos-cli: roos serve daemon + SIGTERM/SIGHUP (ROOS-CLI-003)
+32  roos-trigger: HMAC-SHA256 webhook verification (ROOS-TRIG-002)
+33  roos-core: RoosAgentBus multi-agent channel bus (ROOS-MULTI-001)
+34  roos-core: SupervisorAgent orchestrator-worker (ROOS-MULTI-002)
+35  Alpha release on crates.io
 
-PHASE 3 – Memory & State (tasks 35–44)
-35  roos-orchestrator: context window management truncate/summarize/error (ROOS-ORCH-004)
-36  roos-orchestrator: parallel tool execution for concurrent-safe tools (ROOS-ORCH-005)
-37  roos-memory: QdrantMemory vector store connector (ROOS-MEM-003)
-38  roos-providers: Ollama local inference provider (ROOS-PROV-004)
-39  roos-observability: OpenTelemetry OTLP trace export (ROOS-OBS-002)
-40  roos-observability: Prometheus /metrics endpoint (ROOS-OBS-003)
-41  roos-cli: roos status (ROOS-CLI-005)
-42  roos-cli: roos logs (ROOS-CLI-006)
-43  roos-scheduler: task observability via status + /health (ROOS-SCHED-003)
-44  ROOS Cloud backend + roos deploy (ROOS-CLI-007)
+PHASE 3 – Memory & State (tasks 36–45)
+36  roos-orchestrator: context window management truncate/summarize/error (ROOS-ORCH-004)
+37  roos-orchestrator: parallel tool execution for concurrent-safe tools (ROOS-ORCH-005)
+38  roos-memory: QdrantMemory vector store connector (ROOS-MEM-003)
+39  roos-providers: Ollama local inference provider (ROOS-PROV-004)
+40  roos-observability: OpenTelemetry OTLP trace export (ROOS-OBS-002)
+41  roos-observability: Prometheus /metrics endpoint (ROOS-OBS-003)
+42  roos-cli: roos status (ROOS-CLI-005)
+43  roos-cli: roos logs (ROOS-CLI-006)
+44  roos-scheduler: task observability via status + /health (ROOS-SCHED-003)
+45  ROOS Cloud backend + roos deploy (ROOS-CLI-007)
 
-PHASE 4 – Studio, TUI, Mobile & Enterprise (tasks 45–65)
-45  ROOS Studio v1 — visual harness builder (desktop/web)
-46  Enterprise: SSO/SAML + RBAC + audit log
-47  Compliance: FIPS 140-2 validated builds
-48  Connector Marketplace infrastructure
-49  roos tui: agent status panel (ROOS-TUI-001)
-50  roos tui: live log streaming panel (ROOS-TUI-002)
-51  roos tui: trigger management view (ROOS-TUI-003)
-52  roos tui: secrets vault view (ROOS-TUI-004)
-53  roos tui: usage analytics view (ROOS-TUI-005)
-54  roos tui: connection config --host/--token/--config (ROOS-TUI-007)
-55  roos tui: multi-agent side-by-side view (ROOS-TUI-006)
-56  Mobile: RN scaffold + auth + session management (ROOS-MOB-008)
-57  Mobile: agent status home screen (ROOS-MOB-001)
-58  Mobile: push notifications APNs + FCM (ROOS-MOB-002)
-59  Mobile: live log streaming screen (ROOS-MOB-003)
-60  Mobile: trigger management screen (ROOS-MOB-004)
-61  Mobile: secrets vault + biometrics (ROOS-MOB-005)
-62  Mobile: usage analytics charts (ROOS-MOB-006)
-63  Mobile: team access controls screen read-only (ROOS-MOB-007)
-64  Mobile: offline state + connectivity recovery (ROOS-MOB-009)
-65  GA release v1.0 — docs site live at docs.roos.dev
+PHASE 4 – Studio, TUI, Mobile & Enterprise (tasks 46–66)
+46  ROOS Studio v1 — visual harness builder (desktop/web)
+47  Enterprise: SSO/SAML + RBAC + audit log
+48  Compliance: FIPS 140-2 validated builds
+49  Connector Marketplace infrastructure
+50  roos tui: agent status panel (ROOS-TUI-001)
+51  roos tui: live log streaming panel (ROOS-TUI-002)
+52  roos tui: trigger management view (ROOS-TUI-003)
+53  roos tui: secrets vault view (ROOS-TUI-004)
+54  roos tui: usage analytics view (ROOS-TUI-005)
+55  roos tui: connection config --host/--token/--config (ROOS-TUI-007)
+56  roos tui: multi-agent side-by-side view (ROOS-TUI-006)
+57  Mobile: RN scaffold + auth + session management (ROOS-MOB-008)
+58  Mobile: agent status home screen (ROOS-MOB-001)
+59  Mobile: push notifications APNs + FCM (ROOS-MOB-002)
+60  Mobile: live log streaming screen (ROOS-MOB-003)
+61  Mobile: trigger management screen (ROOS-MOB-004)
+62  Mobile: secrets vault + biometrics (ROOS-MOB-005)
+63  Mobile: usage analytics charts (ROOS-MOB-006)
+64  Mobile: team access controls screen read-only (ROOS-MOB-007)
+65  Mobile: offline state + connectivity recovery (ROOS-MOB-009)
+66  GA release v1.0 — docs site live at docs.roos.dev
 
 Do not skip or reorder tasks.
