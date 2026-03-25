@@ -1,2 +1,3 @@
-// roos-orchestrator — reasoning loop and state machine.
-// Populated in tasks 10–13.
+pub mod state;
+
+pub use state::{AgentState, TransitionError};
