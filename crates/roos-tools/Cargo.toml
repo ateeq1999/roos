@@ -10,12 +10,13 @@ rust-version.workspace = true
 [features]
 default = []
 tools-fs = []
+tools-http = ["reqwest"]
 tools-shell = []
-tools-http = []
-tools-web = []
+tools-web = ["reqwest"]
 
 [dependencies]
 async-trait = "0.1"
+reqwest = { version = "0.12", features = ["json"], optional = true }
 roos-core = { path = "../roos-core" }
 schemars = "0.8"
 serde = { version = "1", features = ["derive"] }
