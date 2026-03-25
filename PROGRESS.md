@@ -10,3 +10,4 @@
 - [x] Task 6: roos-core LLMProvider trait + Message/ToolSchema/CompletionConfig/CompletionResponse (ROOS-PROV-001) — done — async LLMProvider (object-safe), 7 types, 5-variant ProviderError, 10 tests (41 total)
 - [x] Task 7: roos-core Agent trait (ROOS-CORE-001) — done — async Agent trait (object-safe), name/description/run, 2 tests (43 total)
 - [x] Task 8: roos-memory InMemoryStore (ROOS-MEM-004) — done — `RwLock<HashMap>` backend, store/load/append/clear, 7 tests
+- [x] Task 9: roos-macros #[roos::tool] proc-macro + JSON Schema (ROOS-TOOL-002) — done — attribute macro generates Tool struct + Box::pin impl + schemars schema, 6 integration tests
