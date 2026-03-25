@@ -9,3 +9,4 @@
 - [x] Task 5: roos-core Memory trait + MemoryError (ROOS-MEM-001) — done — async Memory trait (object-safe), ConversationHistory/Message, 4-variant MemoryError, 9 tests (31 total)
 - [x] Task 6: roos-core LLMProvider trait + Message/ToolSchema/CompletionConfig/CompletionResponse (ROOS-PROV-001) — done — async LLMProvider (object-safe), 7 types, 5-variant ProviderError, 10 tests (41 total)
 - [x] Task 7: roos-core Agent trait (ROOS-CORE-001) — done — async Agent trait (object-safe), name/description/run, 2 tests (43 total)
+- [x] Task 8: roos-memory InMemoryStore (ROOS-MEM-004) — done — `RwLock<HashMap>` backend, store/load/append/clear, 7 tests
