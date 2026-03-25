@@ -23,3 +23,4 @@
 - [x] Task 19: roos-cli `roos new` scaffolding (ROOS-CLI-001) — done — scaffold() creates roos.toml/src/agent.rs/.gitignore, 4 tests
 - [x] Task 20: roos-cli `roos run` agent invocation (ROOS-CLI-002) — done — reads roos.toml, creates provider + ReasoningLoop, runs synchronously
 - [x] Task 21: roos-cli `roos list` agent table (ROOS-CLI-004) — done — load_agents() + table output, 2 tests (6 total in roos-cli)
+- [x] Task 22: roos-observability structured logging + run_id correlation (ROOS-OBS-001) — done — init_logging (JSON + EnvFilter, try_init), run_span (info_span with %run_id), 5 tests
