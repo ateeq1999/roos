@@ -1,2 +1,3 @@
-// roos-core — core traits and types.
-// Populated in tasks 2–8.
+pub mod error;
+
+pub use error::AgentError;
