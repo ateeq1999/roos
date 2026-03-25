@@ -16,3 +16,4 @@
 - [x] Task 12: roos-orchestrator SystemPromptBuilder (ROOS-ORCH-003) — done — builder with identity/tools/custom, inject_into CompletionConfig, 8 tests (21 total)
 - [x] Task 13: roos-orchestrator tool input JSON Schema validation (ROOS-TOOL-004) — done — validate_tool_input with jsonschema, wired into ReasoningLoop::execute_tool, 5 tests (26 total)
 - [x] Task 14: roos-core roos.toml config + env var interpolation (ROOS-CORE-004) — done — RoosConfig/AgentConfig/ProviderConfig/MemoryConfig, ${VAR} interpolation, 6 tests (49 total)
+- [x] Task 15: roos-providers Anthropic Claude provider (ROOS-PROV-002) — done — AnthropicProvider + wire types + map_response + extract_error, 4 tests

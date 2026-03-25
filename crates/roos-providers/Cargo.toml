@@ -14,4 +14,11 @@ provider-openai = []
 provider-ollama = []
 
 [dependencies]
+async-trait = "0.1"
+reqwest = { version = "0.12", features = ["json"] }
 roos-core = { path = "../roos-core" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt"] }
