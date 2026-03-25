@@ -25,3 +25,4 @@
 - [x] Task 21: roos-cli `roos list` agent table (ROOS-CLI-004) — done — load_agents() + table output, 2 tests (6 total in roos-cli)
 - [x] Task 22: roos-observability structured logging + run_id correlation (ROOS-OBS-001) — done — init_logging (JSON + EnvFilter, try_init), run_span (info_span with %run_id), 5 tests
 - [x] Task 23: roos-tools read_file/write_file/list_directory [tools-fs] (ROOS-TOOL-003) — done — 3 Tool impls feature-gated behind tools-fs, 6 tests
+- [x] Task 24: roos-tools execute_shell + allowlist [tools-shell] (ROOS-TOOL-003) — done — ExecuteShellTool with allowlist prefix check, cross-platform cmd/sh dispatch, 6 tests
