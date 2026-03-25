@@ -1,2 +1,4 @@
 // roos-trigger — HTTP trigger server and webhook handlers.
-// Populated in tasks 17–18.
+
+pub mod server;
+pub use server::{AppState, RunRecord, TriggerRequest, TriggerResponse, TriggerServer};
