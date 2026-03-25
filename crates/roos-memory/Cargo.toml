@@ -9,13 +9,17 @@ rust-version.workspace = true
 
 [features]
 default = ["memory-sled"]
-memory-sled = []
+memory-sled = ["sled", "serde_json"]
 memory-qdrant = []
 
 [dependencies]
 async-trait = "0.1"
 roos-core = { path = "../roos-core" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", optional = true }
+sled = { version = "0.34", optional = true }
 uuid = { version = "1", features = ["v4"] }
 
 [dev-dependencies]
-tokio = { version = "1", features = ["macros", "rt"] }
+tempfile = "3"
+tokio = { version = "1", features = ["macros", "rt", "time"] }
