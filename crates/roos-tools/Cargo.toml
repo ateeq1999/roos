@@ -1,0 +1,18 @@
+[package]
+name = "roos-tools"
+description = "ROOS standard tool belt: file I/O, shell execution, HTTP"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[features]
+default = []
+tools-fs = []
+tools-shell = []
+tools-http = []
+tools-web = []
+
+[dependencies]
+roos-core = { path = "../roos-core" }

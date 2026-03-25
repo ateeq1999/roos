@@ -1,0 +1,15 @@
+[package]
+name = "roos-cli"
+description = "ROOS CLI binary: scaffolding, run, serve, deploy, and TUI dashboard"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "roos"
+path = "src/main.rs"
+
+[dependencies]
+roos-core = { path = "../roos-core" }

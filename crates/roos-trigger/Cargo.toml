@@ -1,0 +1,11 @@
+[package]
+name = "roos-trigger"
+description = "ROOS trigger engine: Axum HTTP server and webhook handlers (Layer 1)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+roos-core = { path = "../roos-core" }

@@ -1,0 +1,17 @@
+[package]
+name = "roos-providers"
+description = "ROOS LLM provider implementations: Anthropic, OpenAI, Ollama"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[features]
+default = ["provider-anthropic", "provider-openai"]
+provider-anthropic = []
+provider-openai = []
+provider-ollama = []
+
+[dependencies]
+roos-core = { path = "../roos-core" }

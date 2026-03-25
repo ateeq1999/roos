@@ -1,0 +1,22 @@
+[workspace]
+members = [
+    "crates/roos",
+    "crates/roos-core",
+    "crates/roos-macros",
+    "crates/roos-orchestrator",
+    "crates/roos-trigger",
+    "crates/roos-scheduler",
+    "crates/roos-tools",
+    "crates/roos-memory",
+    "crates/roos-providers",
+    "crates/roos-observability",
+    "crates/roos-cli",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/ateeq1999/roos"
+rust-version = "1.75"

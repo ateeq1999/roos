@@ -1,0 +1,9 @@
+/target
+**/*.rs.bk
+.env
+.roos/
+*.pem
+*.key
+roos_b*.md
+.claude
+prompt.md

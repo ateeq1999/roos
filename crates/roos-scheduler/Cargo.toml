@@ -1,0 +1,11 @@
+[package]
+name = "roos-scheduler"
+description = "ROOS scheduler engine: cron and one-shot task scheduling (Layer 2)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+roos-core = { path = "../roos-core" }

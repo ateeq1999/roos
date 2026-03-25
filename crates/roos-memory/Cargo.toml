@@ -1,0 +1,16 @@
+[package]
+name = "roos-memory"
+description = "ROOS memory backends: in-memory, Sled embedded store, Qdrant vector store"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[features]
+default = ["memory-sled"]
+memory-sled = []
+memory-qdrant = []
+
+[dependencies]
+roos-core = { path = "../roos-core" }

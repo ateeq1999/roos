@@ -1,0 +1,11 @@
+[package]
+name = "roos"
+description = "Rust Orchestration Operating System — re-export facade"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+roos-core = { path = "../roos-core" }
