@@ -9,6 +9,7 @@ rust-version.workspace = true
 
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
+jsonschema = { version = "0.18", default-features = false }
 roos-core = { path = "../roos-core" }
 serde_json = "1"
 

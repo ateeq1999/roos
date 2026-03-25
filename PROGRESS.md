@@ -14,3 +14,4 @@
 - [x] Task 10: roos-orchestrator AgentState enum state machine (ROOS-ORCH-002) — done — 6-state machine with validated transitions + TransitionError, 10 tests
 - [x] Task 11: roos-orchestrator reasoning loop (ROOS-ORCH-001) — done — ReasoningLoop with provider/tools/memory, Reasoning→Action→Observation, tool errors non-fatal, 3 tests (13 total)
 - [x] Task 12: roos-orchestrator SystemPromptBuilder (ROOS-ORCH-003) — done — builder with identity/tools/custom, inject_into CompletionConfig, 8 tests (21 total)
+- [x] Task 13: roos-orchestrator tool input JSON Schema validation (ROOS-TOOL-004) — done — validate_tool_input with jsonschema, wired into ReasoningLoop::execute_tool, 5 tests (26 total)

@@ -9,6 +9,7 @@ use roos_core::tool::Tool;
 use roos_core::types::{AgentInput, AgentOutput, TokenUsage, ToolCallRecord};
 
 use crate::state::AgentState;
+use crate::validate::validate_tool_input;
 
 /// Drives the Reasoning → Action → Observation loop for one agent run.
 ///
@@ -150,10 +151,18 @@ impl ReasoningLoop {
 
         let (output, error) = match self.tools.get(&call.name) {
             None => (None, Some(format!("no tool named '{}'", call.name))),
-            Some(tool) => match tool.execute(call.input.clone()).await {
-                Ok(out) => (Some(out), None),
-                Err(e) => (None, Some(e.to_string())),
-            },
+            Some(tool) => {
+                // Validate LLM-generated input against the tool's JSON Schema
+                // before execution (ROOS-TOOL-004).
+                if let Err(e) = validate_tool_input(&call.name, &tool.schema(), &call.input) {
+                    (None, Some(e.to_string()))
+                } else {
+                    match tool.execute(call.input.clone()).await {
+                        Ok(out) => (Some(out), None),
+                        Err(e) => (None, Some(e.to_string())),
+                    }
+                }
+            }
         };
 
         ToolCallRecord {
