@@ -1,2 +1,6 @@
 // roos-tools — standard tool belt (feature-flagged).
-// Populated in tasks 23–25.
+
+#[cfg(feature = "tools-fs")]
+pub mod fs;
+#[cfg(feature = "tools-fs")]
+pub use fs::{ListDirectoryTool, ReadFileTool, WriteFileTool};

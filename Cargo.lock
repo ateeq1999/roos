@@ -1475,7 +1475,13 @@ dependencies = [
 name = "roos-tools"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "roos-core",
+ "schemars",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
 ]
 
 [[package]]
