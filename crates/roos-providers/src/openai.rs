@@ -118,61 +118,72 @@ impl LLMProvider for OpenAIProvider {
         messages: &[Message],
         config: &CompletionConfig,
     ) -> Result<CompletionResponse, ProviderError> {
-        let body = ApiRequest {
-            model: &config.model,
-            max_tokens: config.max_tokens.unwrap_or(DEFAULT_MAX_TOKENS),
-            messages: messages
-                .iter()
-                .map(|m| ApiMessage {
-                    role: m.role.clone(),
-                    content: m.content.clone(),
-                })
-                .collect(),
-            tools: config.tools.iter().map(tool_schema_to_api).collect(),
-            system: config.system.as_deref(),
-        };
-
-        let resp = self
-            .client
-            .post(API_URL)
-            .bearer_auth(&self.api_key)
-            .json(&body)
-            .send()
-            .await
-            .map_err(|e| ProviderError::NetworkError { source: e.into() })?;
-
-        let status = resp.status();
-
-        if status == reqwest::StatusCode::UNAUTHORIZED {
-            let msg = extract_error(resp).await;
-            return Err(ProviderError::Unauthorized { message: msg });
-        }
-        if status == reqwest::StatusCode::TOO_MANY_REQUESTS {
-            return Err(ProviderError::RateLimited {
-                retry_after_secs: None,
-            });
-        }
-        if status.is_server_error() {
-            let msg = extract_error(resp).await;
-            return Err(ProviderError::ServerError {
-                status: status.as_u16(),
-                message: msg,
-            });
-        }
-        if !status.is_success() {
-            let msg = extract_error(resp).await;
-            return Err(ProviderError::InvalidResponse { reason: msg });
-        }
-
-        let api: ApiResponse = resp
-            .json()
-            .await
-            .map_err(|e| ProviderError::InvalidResponse {
-                reason: e.to_string(),
-            })?;
-
-        Ok(map_response(api))
+        complete_compat(&self.client, &self.api_key, API_URL, messages, config).await
     }
+}
+
+// ── Shared OpenAI-compatible HTTP completion ──────────────────────────────────
+
+/// Execute a Chat Completions request against any OpenAI-compatible endpoint.
+///
+/// Used internally by [`OpenAIProvider`], [`GroqProvider`], and [`QwenProvider`].
+pub(crate) async fn complete_compat(
+    client: &reqwest::Client,
+    api_key: &str,
+    url: &str,
+    messages: &[Message],
+    config: &CompletionConfig,
+) -> Result<CompletionResponse, ProviderError> {
+    let body = ApiRequest {
+        model: &config.model,
+        max_tokens: config.max_tokens.unwrap_or(DEFAULT_MAX_TOKENS),
+        messages: messages
+            .iter()
+            .map(|m| ApiMessage {
+                role: m.role.clone(),
+                content: m.content.clone(),
+            })
+            .collect(),
+        tools: config.tools.iter().map(tool_schema_to_api).collect(),
+        system: config.system.as_deref(),
+    };
+
+    let resp = client
+        .post(url)
+        .bearer_auth(api_key)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| ProviderError::NetworkError { source: e.into() })?;
+
+    let status = resp.status();
+    if status == reqwest::StatusCode::UNAUTHORIZED {
+        let msg = extract_error(resp).await;
+        return Err(ProviderError::Unauthorized { message: msg });
+    }
+    if status == reqwest::StatusCode::TOO_MANY_REQUESTS {
+        return Err(ProviderError::RateLimited {
+            retry_after_secs: None,
+        });
+    }
+    if status.is_server_error() {
+        let msg = extract_error(resp).await;
+        return Err(ProviderError::ServerError {
+            status: status.as_u16(),
+            message: msg,
+        });
+    }
+    if !status.is_success() {
+        let msg = extract_error(resp).await;
+        return Err(ProviderError::InvalidResponse { reason: msg });
+    }
+    let api: ApiResponse = resp
+        .json()
+        .await
+        .map_err(|e| ProviderError::InvalidResponse {
+            reason: e.to_string(),
+        })?;
+    Ok(map_response(api))
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

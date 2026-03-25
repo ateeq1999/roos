@@ -10,3 +10,18 @@ pub use anthropic::AnthropicProvider;
 pub mod openai;
 #[cfg(feature = "provider-openai")]
 pub use openai::OpenAIProvider;
+
+#[cfg(feature = "provider-groq")]
+pub mod groq;
+#[cfg(feature = "provider-groq")]
+pub use groq::GroqProvider;
+
+#[cfg(feature = "provider-qwen")]
+pub mod qwen;
+#[cfg(feature = "provider-qwen")]
+pub use qwen::QwenProvider;
+
+#[cfg(feature = "provider-cohere")]
+pub mod cohere;
+#[cfg(feature = "provider-cohere")]
+pub use cohere::CohereProvider;

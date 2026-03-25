@@ -10,8 +10,11 @@ rust-version.workspace = true
 [features]
 default = ["provider-anthropic", "provider-openai"]
 provider-anthropic = []
-provider-openai = []
+provider-cohere = []
+provider-groq = []
 provider-ollama = []
+provider-openai = []
+provider-qwen = []
 
 [dependencies]
 async-trait = "0.1"

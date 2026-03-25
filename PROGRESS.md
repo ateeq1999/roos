@@ -27,3 +27,4 @@
 - [x] Task 23: roos-tools read_file/write_file/list_directory [tools-fs] (ROOS-TOOL-003) — done — 3 Tool impls feature-gated behind tools-fs, 6 tests
 - [x] Task 24: roos-tools execute_shell + allowlist [tools-shell] (ROOS-TOOL-003) — done — ExecuteShellTool with allowlist prefix check, cross-platform cmd/sh dispatch, 6 tests
 - [x] Task 25: roos-tools http_get/http_post/search_web [tools-http/web] (ROOS-TOOL-003) — done — HttpGetTool, HttpPostTool (reqwest), SearchWebTool (DuckDuckGo IA API), 6 tests
+- [x] Task 26: roos-providers Groq/Cohere/Qwen providers + .env.example (ROOS-PROV-005/006/007) — done — GroqProvider + QwenProvider (via complete_compat), CohereProvider (v2 API), 5 tests (14 total), .env.example
