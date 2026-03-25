@@ -19,3 +19,4 @@
 - [x] Task 15: roos-providers Anthropic Claude provider (ROOS-PROV-002) — done — AnthropicProvider + wire types + map_response + extract_error, 4 tests
 - [x] Task 16: roos-providers OpenAI provider (ROOS-PROV-003) — done — OpenAIProvider + Chat Completions wire types + map_response + extract_error, 5 tests (9 total)
 - [x] Task 17: roos-trigger Axum HTTP server (ROOS-TRIG-001) — done — TriggerServer with /health /agents /trigger /runs/{id}, AppState RwLock store, 6 tests
+- [x] Task 18: roos-trigger Bearer token auth (ROOS-TRIG-004) — done — require_bearer middleware + BearerToken extension, TriggerServer::with_token(), 5 tests (11 total)

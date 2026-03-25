@@ -1,9 +1,12 @@
 use axum::{
     extract::{Path, State},
     http::StatusCode,
+    middleware,
     routing::{get, post},
-    Json, Router,
+    Extension, Json, Router,
 };
+
+use crate::auth::{require_bearer, BearerToken};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
@@ -106,15 +109,26 @@ async fn runs_handler(
 // ── TriggerServer ─────────────────────────────────────────────────────────────
 
 /// HTTP trigger server exposing `/health`, `/agents`, `/trigger`, and `/runs/{id}`.
+///
+/// When a `bearer_token` is configured (via [`TriggerServer::with_token`]),
+/// all routes except `/health` require `Authorization: Bearer <token>`.
 pub struct TriggerServer {
     state: AppState,
+    bearer_token: Option<String>,
 }
 
 impl TriggerServer {
     pub fn new() -> Self {
         Self {
             state: AppState::new(),
+            bearer_token: None,
         }
+    }
+
+    /// Require Bearer token authentication on protected routes.
+    pub fn with_token(mut self, token: impl Into<String>) -> Self {
+        self.bearer_token = Some(token.into());
+        self
     }
 
     pub fn state(&self) -> &AppState {
@@ -122,11 +136,22 @@ impl TriggerServer {
     }
 
     pub fn router(&self) -> Router {
-        Router::new()
-            .route("/health", get(health_handler))
+        // /health is always open; remaining routes are protected when a token is set.
+        let protected = Router::new()
             .route("/agents", get(agents_handler))
             .route("/trigger", post(trigger_handler))
             .route("/runs/:id", get(runs_handler))
+            .layer(middleware::from_fn(require_bearer));
+
+        let protected = if let Some(ref t) = self.bearer_token {
+            protected.layer(Extension(BearerToken(t.clone())))
+        } else {
+            protected
+        };
+
+        Router::new()
+            .route("/health", get(health_handler))
+            .merge(protected)
             .with_state(self.state.clone())
     }
 
