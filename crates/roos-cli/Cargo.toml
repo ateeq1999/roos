@@ -12,4 +12,13 @@ name = "roos"
 path = "src/main.rs"
 
 [dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
 roos-core = { path = "../roos-core" }
+roos-memory = { path = "../roos-memory" }
+roos-orchestrator = { path = "../roos-orchestrator" }
+roos-providers = { path = "../roos-providers" }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+
+[dev-dependencies]
+tempfile = "3"

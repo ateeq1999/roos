@@ -20,3 +20,6 @@
 - [x] Task 16: roos-providers OpenAI provider (ROOS-PROV-003) — done — OpenAIProvider + Chat Completions wire types + map_response + extract_error, 5 tests (9 total)
 - [x] Task 17: roos-trigger Axum HTTP server (ROOS-TRIG-001) — done — TriggerServer with /health /agents /trigger /runs/{id}, AppState RwLock store, 6 tests
 - [x] Task 18: roos-trigger Bearer token auth (ROOS-TRIG-004) — done — require_bearer middleware + BearerToken extension, TriggerServer::with_token(), 5 tests (11 total)
+- [x] Task 19: roos-cli `roos new` scaffolding (ROOS-CLI-001) — done — scaffold() creates roos.toml/src/agent.rs/.gitignore, 4 tests
+- [x] Task 20: roos-cli `roos run` agent invocation (ROOS-CLI-002) — done — reads roos.toml, creates provider + ReasoningLoop, runs synchronously
+- [x] Task 21: roos-cli `roos list` agent table (ROOS-CLI-004) — done — load_agents() + table output, 2 tests (6 total in roos-cli)
