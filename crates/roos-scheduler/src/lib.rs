@@ -4,4 +4,4 @@ pub mod task;
 
 pub use error::SchedulerError;
 pub use scheduler::CronScheduler;
-pub use task::{ScheduledTask, TaskKind, TaskState};
+pub use task::{RetryPolicy, RetryStrategy, ScheduledTask, TaskKind, TaskState};

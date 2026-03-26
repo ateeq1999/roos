@@ -31,3 +31,4 @@
 - [x] Task 27: roos-memory SledMemory + TTL expiration (ROOS-MEM-002) — done — lazy-evict TTL via expires_at, serde_json encoding, 5 tests (12 total)
 - [x] Task 28: roos-scheduler cron scheduler + Sled-backed task state (ROOS-SCHED-001) — done — CronScheduler (Sled backend), SchedulerError/TaskState/ScheduledTask, 5-field+6-field cron, due_tasks/reschedule, 9 tests
 - [x] Task 29: roos-scheduler one-shot scheduled tasks (ROOS-SCHED-002) — done — TaskKind (Cron/OneShot), add_one_shot, reschedule marks OneShot Completed, 13 tests total
+- [x] Task 30: roos-scheduler retry policy fixed/exponential (ROOS-SCHED-004) — done — RetryStrategy/RetryPolicy types, record_failure (reschedules or marks Failed), add_task_with_retry/add_one_shot_with_retry, tracing::error on exhaustion, 17 tests total
