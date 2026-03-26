@@ -7,6 +7,7 @@ use axum::{
 };
 
 use crate::auth::{require_bearer, BearerToken};
+use crate::webhook::{require_webhook_signature, WebhookSecret};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
@@ -115,6 +116,7 @@ async fn runs_handler(
 pub struct TriggerServer {
     state: AppState,
     bearer_token: Option<String>,
+    webhook_secret: Option<String>,
 }
 
 impl TriggerServer {
@@ -122,6 +124,7 @@ impl TriggerServer {
         Self {
             state: AppState::new(),
             bearer_token: None,
+            webhook_secret: None,
         }
     }
 
@@ -131,15 +134,32 @@ impl TriggerServer {
         self
     }
 
+    /// Enable HMAC-SHA256 webhook signature verification on the `/trigger` route.
+    /// Accepts `X-Hub-Signature-256` (GitHub) or `X-ROOS-Signature` (generic).
+    pub fn with_webhook_secret(mut self, secret: impl Into<String>) -> Self {
+        self.webhook_secret = Some(secret.into());
+        self
+    }
+
     pub fn state(&self) -> &AppState {
         &self.state
     }
 
     pub fn router(&self) -> Router {
+        // `/trigger` optionally requires HMAC-SHA256 webhook signature.
+        let trigger = Router::new().route("/trigger", post(trigger_handler));
+        let trigger = if let Some(ref secret) = self.webhook_secret {
+            trigger
+                .layer(middleware::from_fn(require_webhook_signature))
+                .layer(Extension(WebhookSecret(secret.clone())))
+        } else {
+            trigger
+        };
+
         // /health is always open; remaining routes are protected when a token is set.
         let protected = Router::new()
             .route("/agents", get(agents_handler))
-            .route("/trigger", post(trigger_handler))
+            .merge(trigger)
             .route("/runs/:id", get(runs_handler))
             .layer(middleware::from_fn(require_bearer));
 
@@ -254,6 +274,61 @@ mod tests {
             .unwrap();
         let resp = app.oneshot(req).await.unwrap();
         assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
+    }
+
+    // ── webhook signature tests ───────────────────────────────────────────────
+
+    fn github_sig(secret: &[u8], body: &[u8]) -> String {
+        use hmac::{Hmac, Mac};
+        use sha2::Sha256;
+        let mut mac = Hmac::<Sha256>::new_from_slice(secret).unwrap();
+        mac.update(body);
+        format!("sha256={}", hex::encode(mac.finalize().into_bytes()))
+    }
+
+    #[tokio::test]
+    async fn webhook_valid_github_sig_passes() {
+        let app = TriggerServer::new().with_webhook_secret("s3cr3t").router();
+        let body = serde_json::json!({"agent": "bot", "input": {}}).to_string();
+        let sig = github_sig(b"s3cr3t", body.as_bytes());
+        let req = Request::builder()
+            .method("POST")
+            .uri("/trigger")
+            .header("content-type", "application/json")
+            .header("X-Hub-Signature-256", sig)
+            .body(Body::from(body))
+            .unwrap();
+        let resp = app.oneshot(req).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::ACCEPTED);
+    }
+
+    #[tokio::test]
+    async fn webhook_missing_sig_is_unauthorized() {
+        let app = TriggerServer::new().with_webhook_secret("s3cr3t").router();
+        let body = serde_json::json!({"agent": "bot", "input": {}}).to_string();
+        let req = Request::builder()
+            .method("POST")
+            .uri("/trigger")
+            .header("content-type", "application/json")
+            .body(Body::from(body))
+            .unwrap();
+        let resp = app.oneshot(req).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
+    }
+
+    #[tokio::test]
+    async fn webhook_invalid_sig_is_unauthorized() {
+        let app = TriggerServer::new().with_webhook_secret("s3cr3t").router();
+        let body = serde_json::json!({"agent": "bot", "input": {}}).to_string();
+        let req = Request::builder()
+            .method("POST")
+            .uri("/trigger")
+            .header("content-type", "application/json")
+            .header("X-Hub-Signature-256", "sha256=deadbeef")
+            .body(Body::from(body))
+            .unwrap();
+        let resp = app.oneshot(req).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::UNAUTHORIZED);
     }
 
     #[tokio::test]

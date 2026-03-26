@@ -2,5 +2,7 @@
 
 pub mod auth;
 pub mod server;
+pub mod webhook;
 pub use auth::BearerToken;
 pub use server::{AppState, RunRecord, TriggerRequest, TriggerResponse, TriggerServer};
+pub use webhook::WebhookSecret;
