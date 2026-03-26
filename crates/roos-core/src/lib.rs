@@ -8,6 +8,7 @@ pub mod config;
 pub mod error;
 pub mod memory;
 pub mod provider;
+pub mod supervisor;
 pub mod tool;
 pub mod types;
 
@@ -20,5 +21,6 @@ pub use provider::{
     CompletionConfig, CompletionResponse, LLMProvider, Message, ProviderError, StopReason,
     ToolCall, ToolSchema,
 };
+pub use supervisor::{SupervisorAgent, WorkerSpec};
 pub use tool::{Tool, ToolError};
 pub use types::{AgentInput, AgentOutput, TokenUsage, ToolCallRecord};
