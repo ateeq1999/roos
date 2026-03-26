@@ -6,7 +6,7 @@ use uuid::Uuid;
 
 use crate::{
     error::SchedulerError,
-    task::{ScheduledTask, TaskState},
+    task::{ScheduledTask, TaskKind, TaskState},
 };
 
 pub struct CronScheduler {
@@ -66,11 +66,34 @@ impl CronScheduler {
         let task = ScheduledTask {
             id,
             agent: agent.to_owned(),
-            cron_expr: cron_expr.to_owned(),
+            kind: TaskKind::Cron {
+                expr: cron_expr.to_owned(),
+            },
             input: input.to_owned(),
             state: TaskState::Pending,
             last_run: None,
             next_run: Self::next_run(&schedule),
+        };
+        self.save(&task)?;
+        Ok(id)
+    }
+
+    /// Add a one-shot task that executes once at `at` and does not reschedule.
+    pub fn add_one_shot(
+        &self,
+        agent: &str,
+        at: DateTime<Utc>,
+        input: &str,
+    ) -> Result<Uuid, SchedulerError> {
+        let id = Uuid::new_v4();
+        let task = ScheduledTask {
+            id,
+            agent: agent.to_owned(),
+            kind: TaskKind::OneShot,
+            input: input.to_owned(),
+            state: TaskState::Pending,
+            last_run: None,
+            next_run: Some(at),
         };
         self.save(&task)?;
         Ok(id)
@@ -108,12 +131,21 @@ impl CronScheduler {
         self.save(&task)
     }
 
-    /// Recompute `next_run` from the cron expression and reset state to `Pending`.
+    /// For cron tasks: recompute `next_run` and reset to `Pending`.
+    /// For one-shot tasks: mark `Completed` (they do not repeat).
     pub fn reschedule(&self, id: Uuid) -> Result<(), SchedulerError> {
         let mut task = self.load(id)?;
-        let schedule = Self::parse_schedule(&task.cron_expr)?;
-        task.next_run = Self::next_run(&schedule);
-        task.state = TaskState::Pending;
+        match &task.kind {
+            TaskKind::Cron { expr } => {
+                let schedule = Self::parse_schedule(expr)?;
+                task.next_run = Self::next_run(&schedule);
+                task.state = TaskState::Pending;
+            }
+            TaskKind::OneShot => {
+                task.state = TaskState::Completed;
+                task.next_run = None;
+            }
+        }
         self.save(&task)
     }
 
@@ -138,7 +170,9 @@ impl CronScheduler {
         let task = ScheduledTask {
             id,
             agent: agent.to_owned(),
-            cron_expr: cron_expr.to_owned(),
+            kind: TaskKind::Cron {
+                expr: cron_expr.to_owned(),
+            },
             input: input.to_owned(),
             state: TaskState::Pending,
             last_run: None,
@@ -154,6 +188,56 @@ mod tests {
     use super::*;
     use chrono::Duration;
     use tempfile::TempDir;
+
+    // ── one-shot tests ────────────────────────────────────────────────────────
+
+    #[test]
+    fn add_one_shot_persists() {
+        let tmp = TempDir::new().unwrap();
+        let s = open(&tmp);
+        let at = Utc::now() + Duration::hours(1);
+        let id = s.add_one_shot("agent1", at, "run").unwrap();
+        let tasks = s.list_tasks().unwrap();
+        assert_eq!(tasks.len(), 1);
+        assert_eq!(tasks[0].id, id);
+        assert_eq!(tasks[0].kind, TaskKind::OneShot);
+        assert_eq!(tasks[0].state, TaskState::Pending);
+    }
+
+    #[test]
+    fn one_shot_due_when_past() {
+        let tmp = TempDir::new().unwrap();
+        let s = open(&tmp);
+        let past = Utc::now() - Duration::seconds(10);
+        let id = s.add_one_shot("agent1", past, "run").unwrap();
+        let due = s.due_tasks().unwrap();
+        assert_eq!(due.len(), 1);
+        assert_eq!(due[0].id, id);
+    }
+
+    #[test]
+    fn one_shot_future_not_due() {
+        let tmp = TempDir::new().unwrap();
+        let s = open(&tmp);
+        let future = Utc::now() + Duration::hours(1);
+        s.add_one_shot("agent1", future, "run").unwrap();
+        assert!(s.due_tasks().unwrap().is_empty());
+    }
+
+    #[test]
+    fn reschedule_one_shot_marks_completed() {
+        let tmp = TempDir::new().unwrap();
+        let s = open(&tmp);
+        let past = Utc::now() - Duration::seconds(5);
+        let id = s.add_one_shot("agent1", past, "run").unwrap();
+        s.update_state(id, TaskState::Running).unwrap();
+        s.reschedule(id).unwrap();
+        let tasks = s.list_tasks().unwrap();
+        assert_eq!(tasks[0].state, TaskState::Completed);
+        assert!(tasks[0].next_run.is_none());
+    }
+
+    // ── cron tests ────────────────────────────────────────────────────────────
 
     fn open(tmp: &TempDir) -> CronScheduler {
         CronScheduler::open(tmp.path().to_str().unwrap()).unwrap()
