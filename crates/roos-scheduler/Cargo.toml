@@ -8,4 +8,13 @@ repository.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+chrono = { version = "0.4", features = ["serde"] }
+cron = "0.12"
 roos-core = { path = "../roos-core" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sled = "0.34"
+uuid = { version = "1", features = ["v4"] }
+
+[dev-dependencies]
+tempfile = "3"

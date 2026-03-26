@@ -29,3 +29,4 @@
 - [x] Task 25: roos-tools http_get/http_post/search_web [tools-http/web] (ROOS-TOOL-003) — done — HttpGetTool, HttpPostTool (reqwest), SearchWebTool (DuckDuckGo IA API), 6 tests
 - [x] Task 26: roos-providers Groq/Cohere/Qwen providers + .env.example (ROOS-PROV-005/006/007) — done — GroqProvider + QwenProvider (via complete_compat), CohereProvider (v2 API), 5 tests (14 total), .env.example
 - [x] Task 27: roos-memory SledMemory + TTL expiration (ROOS-MEM-002) — done — lazy-evict TTL via expires_at, serde_json encoding, 5 tests (12 total)
+- [x] Task 28: roos-scheduler cron scheduler + Sled-backed task state (ROOS-SCHED-001) — done — CronScheduler (Sled backend), SchedulerError/TaskState/ScheduledTask, 5-field+6-field cron, due_tasks/reschedule, 9 tests
