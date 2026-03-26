@@ -31,6 +31,18 @@ enum Commands {
         #[arg(short, long, default_value = "roos.toml")]
         config: String,
     },
+    /// Start ROOS in long-running server mode (trigger HTTP + scheduler)
+    Serve {
+        /// HTTP trigger port
+        #[arg(short, long, default_value_t = 8080)]
+        port: u16,
+        /// Path to roos.toml
+        #[arg(short, long, default_value = "roos.toml")]
+        config: String,
+        /// Fork to background — Linux/macOS only (not yet implemented)
+        #[arg(long)]
+        daemonize: bool,
+    },
 }
 
 #[tokio::main]
@@ -40,5 +52,10 @@ async fn main() -> anyhow::Result<()> {
         Commands::New { name } => cmd::new::run(&name),
         Commands::Run { input, config } => cmd::run::run(&config, &input).await,
         Commands::List { config } => cmd::list::run(&config),
+        Commands::Serve {
+            port,
+            config,
+            daemonize,
+        } => cmd::serve::run(port, &config, daemonize).await,
     }
 }

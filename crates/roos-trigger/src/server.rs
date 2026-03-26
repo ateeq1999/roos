@@ -159,6 +159,17 @@ impl TriggerServer {
         let listener = tokio::net::TcpListener::bind(addr).await?;
         axum::serve(listener, self.router()).await
     }
+
+    /// Like [`serve`] but resolves `shutdown` for graceful shutdown.
+    pub async fn serve_with_shutdown<F>(self, addr: &str, shutdown: F) -> Result<(), std::io::Error>
+    where
+        F: std::future::Future<Output = ()> + Send + 'static,
+    {
+        let listener = tokio::net::TcpListener::bind(addr).await?;
+        axum::serve(listener, self.router())
+            .with_graceful_shutdown(shutdown)
+            .await
+    }
 }
 
 impl Default for TriggerServer {
