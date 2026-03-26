@@ -3,6 +3,7 @@
 pub use schemars;
 
 pub mod agent;
+pub mod bus;
 pub mod config;
 pub mod error;
 pub mod memory;
@@ -11,6 +12,7 @@ pub mod tool;
 pub mod types;
 
 pub use agent::Agent;
+pub use bus::{BusError, BusEvent, BusMessage, RoosAgentBus};
 pub use config::{AgentConfig, ConfigError, MemoryConfig, ProviderConfig, RoosConfig};
 pub use error::AgentError;
 pub use memory::{ConversationHistory, ConversationMessage, Memory, MemoryError};
